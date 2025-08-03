@@ -38,25 +38,23 @@ def encode_inputs():
     ]
 
 
+
 # Prediction
 if st.button("Predict Car Price"):
     input_data = encode_inputs()
 
-    # Separate out features for scaling (must match training)
-    to_scale = np.array([[input_data[5], input_data[6]]])  # Kms_Driven and Age
+    # Extract only Kms_Driven and Age for scaling
+    to_scale = np.array([[input_data[5], input_data[6]]])
     scaled = scaler.transform(to_scale)
 
-    final_input = np.array([
-        input_data[0],  # company
-        input_data[1],  # fuel
-        input_data[2],  # transmission
-        input_data[3],  # seller
-        input_data[4],  # owner
-        scaled[0][0],   # scaled kms_driven
-        scaled[0][1],   # scaled age
-        input_data[7]   # seats
-    ]).reshape(1, -1)
+    # Replace Kms_Driven and Age with scaled versions
+    input_data[5] = scaled[0][0]
+    input_data[6] = scaled[0][1]
+
+    final_input = np.array(input_data).reshape(1, -1)
 
     result = model.predict(final_input)
     st.success(f"💰 Estimated Car Price: ₹ {result[0]:,.2f}")
+
+
 

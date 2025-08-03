@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import joblib
 
+# Replace with your actual absolute path
+model = joblib.load('/path/to/your/project/car-price-predictor-ml/advanced_car_price_model.pkl')
+
 # Load model and scaler
 model = joblib.load('advanced_car_price_model.pkl')
 scaler = joblib.load('scaler.pkl')
@@ -50,3 +53,4 @@ if st.button("Predict Price"):
 
 st.markdown("---")
 st.caption("Made with ❤️ using Streamlit and Machine Learning")
+

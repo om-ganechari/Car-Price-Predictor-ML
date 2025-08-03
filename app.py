@@ -3,7 +3,7 @@ import numpy as np
 import joblib
 
 # Load model and scaler
-model = joblib.load("advanced_car_price_model.pkl")
+model = joblib.load("model.pkl")
 scaler = joblib.load("scaler.pkl")
 
 # Page config
@@ -79,4 +79,5 @@ if st.button("Predict Selling Price 💰"):
     prediction = model.predict(final_input)
 
     st.success(f"💰 Estimated Selling Price: ₹ {prediction[0]:,.2f}")
+
 

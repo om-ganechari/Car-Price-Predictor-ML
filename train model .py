@@ -7,7 +7,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import pickle
 
 # Load and clean data
-df = pd.read_csv("Car details v3.csv")
+df = pd.read_csv("quikr_car.csv")
 df.drop_duplicates(inplace=True)
 df.dropna(inplace=True)
 df['Age'] = 2025 - df['year']
@@ -58,3 +58,4 @@ y_pred = model.predict(X_test)
 print("✅ Training complete.")
 print("R2 Score:", r2_score(y_test, y_pred))
 print("RMSE:", np.sqrt(mean_squared_error(y_test, y_pred)))
+

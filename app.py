@@ -82,7 +82,6 @@ if st.button("Predict Price"):
         input_data = encode_inputs()
         
         # Scale the numerical features (kms_driven, age) using the pre-trained scaler
-        # We need to make a copy to avoid modifying the original array
         scaled_input = input_data.copy()
         scaled_input[:, :2] = scaler.transform(scaled_input[:, :2])
         

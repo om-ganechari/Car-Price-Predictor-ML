@@ -7,7 +7,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import joblib
 
 # Load dataset
-df = pd.read_csv("Car details v3.csv")
+df = pd.read_csv("quikr_car.csv")
 
 # Data cleaning
 df.drop_duplicates(inplace=True)
@@ -58,3 +58,4 @@ y_pred = gs.best_estimator_.predict(X_test)
 print("R2 Score:", r2_score(y_test, y_pred))
 print("RMSE:", np.sqrt(mean_squared_error(y_test, y_pred)))
 print("✅ Model and Scaler saved!")
+

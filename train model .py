@@ -1,13 +1,15 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, r2_score
-import pickle
+import joblib
 
-# Load and clean data
-df = pd.read_csv("quikr_car.csv")
+# Load dataset
+df = pd.read_csv("Car details v3.csv")
+
+# Data cleaning
 df.drop_duplicates(inplace=True)
 df.dropna(inplace=True)
 df['Age'] = 2025 - df['year']
@@ -23,44 +25,36 @@ df.rename(columns={
     'owner': 'Owner_Type'
 }, inplace=True)
 
-# Keep only the features we need
-df = df[['Kms_Driven', 'Age', 'Fuel_Type', 'Transmission_Type', 'Selling_Price']]
-
-# One-hot encode and drop unused categories
-df = pd.get_dummies(df, columns=['Fuel_Type', 'Transmission_Type'], drop_first=False)
-df.drop(['Fuel_Type_Petrol', 'Transmission_Type_Automatic'], axis=1, errors='ignore', inplace=True)
-
-# Add missing dummy columns if needed
-for col in ['Fuel_Type_Diesel', 'Transmission_Type_Manual']:
-    if col not in df.columns:
-        df[col] = 0
-
-# Final feature list
-features = ['Kms_Driven', 'Age', 'Fuel_Type_Diesel', 'Transmission_Type_Manual']
-X = df[features]
-y = df['Selling_Price']
+# One-hot encoding
+df = pd.get_dummies(df, drop_first=True)
 
 # Split data
+X = df.drop('Selling_Price', axis=1)
+y = df['Selling_Price']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Scaling (optional for RandomForest, kept for consistency)
+# Scaling
 scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+X_train[['Kms_Driven', 'Age']] = scaler.fit_transform(X_train[['Kms_Driven', 'Age']])
+X_test[['Kms_Driven', 'Age']] = scaler.transform(X_test[['Kms_Driven', 'Age']])
 
 # Model training
-model = RandomForestRegressor(random_state=42)
-model.fit(X_train, y_train)
+rf = RandomForestRegressor(random_state=42)
+params = {
+    'n_estimators': [100],
+    'max_depth': [None, 10],
+    'min_samples_split': [2, 5],
+    'min_samples_leaf': [1, 2]
+}
+gs = GridSearchCV(rf, params, cv=3, n_jobs=-1, scoring='r2')
+gs.fit(X_train, y_train)
 
-# Save model and scaler
-with open('advanced_car_price_model.pkl', 'wb') as f:
-    pickle.dump(model, f)
-with open('scaler.pkl', 'wb') as f:
-    pickle.dump(scaler, f)
+# Save best model
+joblib.dump(gs.best_estimator_, 'advanced_car_price_model.pkl')
+joblib.dump(scaler, 'scaler.pkl')
 
 # Evaluate
-y_pred = model.predict(X_test)
-print("✅ Training complete.")
-print("🔍 Feature order used for training:", features)
-print("📈 R2 Score:", r2_score(y_test, y_pred))
-print("📉 RMSE:", np.sqrt(mean_squared_error(y_test, y_pred)))
+y_pred = gs.best_estimator_.predict(X_test)
+print("R2 Score:", r2_score(y_test, y_pred))
+print("RMSE:", np.sqrt(mean_squared_error(y_test, y_pred)))
+print("✅ Model and Scaler saved!")

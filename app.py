@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 
 # Load model and scaler
-with open('model.pkl', 'rb') as f:
+with open('advanced_car_price_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 with open('scaler.pkl', 'rb') as f:
@@ -28,5 +28,6 @@ scaled_input = scaler.transform(input_data)
 if st.button("Predict Price 💰"):
     prediction = model.predict(scaled_input)
     st.success(f"Estimated Price: ₹ {prediction[0]:,.2f}")
+
 
 

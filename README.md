@@ -22,6 +22,20 @@ Used car pricing can be tricky — sellers often overprice, buyers lowball. This
 
 ---
 
+📁 Folder Structure
+
+Car-Price-Predictor-ML/
+│
+├── app.py                   # Streamlit frontend
+├── model_training.py        # Data cleaning + model building
+├── advanced_car_price_model.pkl
+├── scaler.pkl
+├── requirements.txt
+├── README.md
+└── data/
+    └── dummy_car_data.csv
+
+----
 ## 📊 Features
 
 - Data preprocessing & feature encoding

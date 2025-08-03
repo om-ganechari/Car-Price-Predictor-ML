@@ -50,7 +50,7 @@ model = RandomForestRegressor(random_state=42)
 model.fit(X_train, y_train)
 
 # Save model and scaler
-pickle.dump(model, open('model.pkl', 'wb'))
+pickle.dump(model, open('advanced_car_price_model.pkl', 'wb'))
 pickle.dump(scaler, open('scaler.pkl', 'wb'))
 
 # Evaluate
@@ -58,4 +58,5 @@ y_pred = model.predict(X_test)
 print("✅ Training complete.")
 print("R2 Score:", r2_score(y_test, y_pred))
 print("RMSE:", np.sqrt(mean_squared_error(y_test, y_pred)))
+
 

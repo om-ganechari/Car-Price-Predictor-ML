@@ -1,30 +1,33 @@
 import streamlit as st
-import pickle
+import pandas as pd
 import numpy as np
+import joblib
 
-# Load model and scaler
-with open('advanced_car_price_model.pkl', 'rb') as f:
-    model = pickle.load(f)
-
-with open('scaler.pkl', 'rb') as f:
-    scaler = pickle.load(f)
+# Load trained model and transformers
+model = joblib.load("model.pkl")
+scaler = joblib.load("scaler.pkl")
+label_encoders = joblib.load("label_encoders.pkl")
 
 st.title("🚗 Car Price Predictor")
+st.markdown("Predict the **price of a used car** based on key features.")
 
-# User inputs
-kms_driven = st.number_input("KMs Driven", value=50000)
-age = st.slider("Car Age (in years)", 0, 30, 5)
-fuel_type = st.selectbox("Fuel Type", ['Petrol', 'Diesel', 'CNG', 'LPG', 'Electric'])
-transmission_type = st.selectbox("Transmission Type", ['Manual', 'Automatic'])
+with st.form("input_form"):
+    year = st.number_input("Year of Purchase", min_value=1990, max_value=2025, step=1)
+    kms_driven = st.number_input("Kilometers Driven", min_value=0, max_value=500000, step=100)
+    fuel = st.selectbox("Fuel Type", label_encoders['Fuel_Type'].classes_)
+    seller_type = st.selectbox("Seller Type", label_encoders['Seller_Type'].classes_)
+    transmission = st.selectbox("Transmission", label_encoders['Transmission'].classes_)
+    owner = st.selectbox("Owner Type", label_encoders['Owner'].classes_)
+    submit = st.form_submit_button("Predict Price")
 
-# Manual encoding (must match training)
-fuel_diesel = 1 if fuel_type == 'Diesel' else 0
-trans_manual = 1 if transmission_type == 'Manual' else 0
+if submit:
+    fuel_encoded = label_encoders['Fuel_Type'].transform([fuel])[0]
+    seller_encoded = label_encoders['Seller_Type'].transform([seller_type])[0]
+    trans_encoded = label_encoders['Transmission'].transform([transmission])[0]
+    owner_encoded = label_encoders['Owner'].transform([owner])[0]
 
-# Final input: only 4 features
-input_data = np.array([[kms_driven, age, fuel_diesel, trans_manual]])
-scaled_input = scaler.transform(input_data)
+    input_features = np.array([[year, kms_driven, fuel_encoded, seller_encoded, trans_encoded, owner_encoded]])
+    input_scaled = scaler.transform(input_features)
+    price = model.predict(input_scaled)[0]
 
-if st.button("Predict Price 💰"):
-    prediction = model.predict(scaled_input)
-    st.success(f"Estimated Price: ₹ {prediction[0]:,.2f}")
+    st.success(f"💰 Estimated Car Price: ₹{price:,.2f}")

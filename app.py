@@ -1,33 +1,52 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import joblib
 
-# Load trained model and transformers
-model = joblib.load("model.pkl")
-scaler = joblib.load("scaler.pkl")
-label_encoders = joblib.load("label_encoders.pkl")
+# Safe load function
+def safe_load(path):
+    try:
+        return joblib.load(path)
+    except Exception as e:
+        st.error(f"❌ Failed to load {path}: {e}")
+        return None
 
-st.title("🚗 Car Price Predictor")
-st.markdown("Predict the **price of a used car** based on key features.")
+# Load model, scaler, and encoders
+model = safe_load("model.pkl")
+scaler = safe_load("scaler.pkl")
+label_encoders = safe_load("label_encoders.pkl")
 
-with st.form("input_form"):
-    year = st.number_input("Year of Purchase", min_value=1990, max_value=2025, step=1)
-    kms_driven = st.number_input("Kilometers Driven", min_value=0, max_value=500000, step=100)
-    fuel = st.selectbox("Fuel Type", label_encoders['Fuel_Type'].classes_)
-    seller_type = st.selectbox("Seller Type", label_encoders['Seller_Type'].classes_)
-    transmission = st.selectbox("Transmission", label_encoders['Transmission'].classes_)
-    owner = st.selectbox("Owner Type", label_encoders['Owner'].classes_)
-    submit = st.form_submit_button("Predict Price")
+if not all([model, scaler, label_encoders]):
+    st.stop()
 
-if submit:
-    fuel_encoded = label_encoders['Fuel_Type'].transform([fuel])[0]
-    seller_encoded = label_encoders['Seller_Type'].transform([seller_type])[0]
-    trans_encoded = label_encoders['Transmission'].transform([transmission])[0]
-    owner_encoded = label_encoders['Owner'].transform([owner])[0]
+# Streamlit UI
+st.set_page_config(page_title="Car Price Predictor", page_icon="🚗")
+st.title("🚗 Car Price Predictor ML App")
+st.markdown("### Enter Car Details to Predict Its Selling Price")
 
-    input_features = np.array([[year, kms_driven, fuel_encoded, seller_encoded, trans_encoded, owner_encoded]])
-    input_scaled = scaler.transform(input_features)
-    price = model.predict(input_scaled)[0]
+# Input fields
+year = st.number_input("Car Purchase Year", min_value=1990, max_value=2025, value=2015)
+present_price = st.number_input("Present Showroom Price (in Lakhs)", min_value=0.0, max_value=50.0, value=5.0)
+kms_driven = st.number_input("Kilometers Driven", min_value=0, value=30000)
+owner = st.selectbox("Number of Previous Owners", [0, 1, 2, 3])
+fuel_type = st.selectbox("Fuel Type", label_encoders['Fuel_Type'].classes_)
+seller_type = st.selectbox("Seller Type", label_encoders['Seller_Type'].classes_)
+transmission = st.selectbox("Transmission Type", label_encoders['Transmission'].classes_)
 
-    st.success(f"💰 Estimated Car Price: ₹{price:,.2f}")
+# Prediction logic
+if st.button("Predict Selling Price"):
+    try:
+        # Encode categorical variables
+        fuel_encoded = label_encoders['Fuel_Type'].transform([fuel_type])[0]
+        seller_encoded = label_encoders['Seller_Type'].transform([seller_type])[0]
+        transmission_encoded = label_encoders['Transmission'].transform([transmission])[0]
+
+        # Feature vector
+        input_data = [[year, present_price, kms_driven, fuel_encoded, seller_encoded, transmission_encoded, owner]]
+        input_scaled = scaler.transform(input_data)
+
+        # Predict
+        predicted_price = model.predict(input_scaled)[0]
+        st.success(f"💰 Estimated Selling Price: ₹ {predicted_price:.2f} Lakhs")
+    except Exception as e:
+        st.error(f"Prediction failed: {e}")
+

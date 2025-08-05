@@ -1,54 +1,140 @@
-# 🚗 Car Price Predictor using Machine Learning
-
-Welcome to the **Car Price Prediction** project!  
-This machine learning model predicts the selling price of a used car based on key features like brand, mileage, fuel type, engine capacity, and more. It uses a regression model and is deployed via a user-friendly Streamlit web app.
-
----
-
-## 🔍 Project Overview
-
-Used car pricing can be tricky — sellers often overprice, buyers lowball. This app helps estimate a car's fair price using machine learning, trained on a structured dataset.
+🚗 Car Price Predictor – ML Project
+A Machine Learning model that accurately predicts the price of a car based on various features like year, fuel type, seller type, transmission, and more.
+Deployed with Streamlit Cloud for a smooth, interactive experience.
 
 ---
+📌 Table of Contents
+🔍 Problem Statement
 
-## 🧠 Tech Stack
+📂 Dataset
 
-- **Python** 🐍
-- **Pandas & NumPy** for data wrangling
-- **Scikit-learn** for model building and evaluation
-- **Matplotlib & Seaborn** for visualization
-- **Streamlit** for interactive web deployment
-- **Pickle** for model serialization
+🧠 ML Workflow
+
+📊 Results
+
+🚀 Deployment
+
+🛠️ Tech Stack
+
+📸 Demo
+
+👨‍💻 Author
 
 ---
-
-📁 Folder Structure
-
-Car-Price-Predictor-ML/
-│
-├── app.py                   # Streamlit frontend
-├── model_training.py        # Data cleaning + model building
-├── advanced_car_price_model.pkl
-├── scaler.pkl
-├── requirements.txt
-├── README.md
-└── data/
-    └── dummy_car_data.csv
+🔍 Problem Statement
+Car pricing in the resale market is influenced by multiple dynamic features. Manual prediction is inaccurate and inefficient.
+Goal: Build a regression model to accurately predict car prices using historical car sales data.
 
 ----
-## 📊 Features
+📂 Dataset
+Source: Provided by Internpe
 
-- Data preprocessing & feature encoding
-- Regression-based ML model (LinearRegression)
-- Input scaling using `StandardScaler`
-- Real-time predictions through a web UI
-- Easy customization for new datasets
+Format: .csv file
 
----
+Features include:
 
-## 🚀 How to Run Locally
+Year (of manufacturing)
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com//Car-Price-Predictor-ML.git
-   cd Car-Price-Predictor-ML
+Present_Price
+
+Kms_Driven
+
+Fuel_Type
+
+Seller_Type
+
+Transmission
+
+Owner
+
+Price (Target)
+
+-----
+
+🧠 ML Workflow
+Data Preprocessing
+
+Handled missing values
+
+Label encoding of categorical features
+
+Feature scaling
+
+Model Building
+
+Trained a RandomForestRegressor
+
+Evaluated using MAE, RMSE, R² score
+
+Serialization
+
+Saved trained model as model.pkl using joblib
+
+Deployment
+
+Streamlit frontend for real-time prediction
+
+Deployed on Streamlit Cloud
+
+-----
+
+
+🔧 File Structure for Deployment
+CarPricePredictor/
+├── car data.csv
+├── model.pkl                    ← trained model file
+├── app.py                       ← Streamlit app
+├── requirements.txt             ← for deployment
+└── README.md                    ← optional
+
+-----
+
+📊 Results
+Metric	Value
+MAE	₹XXXX
+RMSE	₹XXXX
+R² Score	0.XX
+
+🔥 Model achieves strong performance and generalization on test data.
+
+-------
+
+🚀 Deployment
+🌐 Live Streamlit App: Click to Try It
+
+-----
+
+📁 To Run Locally:
+
+bash
+Copy
+Edit
+git clone https://github.com/your-username/car-price-predictor-ml.git
+cd car-price-predictor-ml
+pip install -r requirements.txt
+streamlit run app.py
+🛠️ Tech Stack
+Python 🐍
+
+Pandas, NumPy
+
+Scikit-learn
+
+Streamlit
+
+Joblib
+
+GitHub
+
+-------
+📸 Demo
+(Add your screenshot here)
+
+-------
+
+👨‍💻 Author
+Om Ganechari
+🎓 Artificial Intelligence & Data Science
+🔗 LinkedIn
+💼 GitHub
+

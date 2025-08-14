@@ -127,14 +127,8 @@ Joblib
 GitHub
 
 -------
-📸 Demo
-(Add your screenshot here)
-
--------
 
 👨‍💻 Author
 Om Ganechari
 🎓 Artificial Intelligence & Data Science
-🔗 LinkedIn
-💼 GitHub
 
